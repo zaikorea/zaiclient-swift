@@ -1,0 +1,8 @@
+use_frameworks!
+target 'zaiclient_Tests' do
+  pod 'zaiclient', :path => '../'
+  
+  pod 'Quick', '~> 2.2.0'
+  pod 'Nimble', '~> 10.0.0'
+  pod 'AWSDynamoDB'
+end
