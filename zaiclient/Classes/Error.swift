@@ -4,7 +4,7 @@ public enum ZaiError: Error {
     case InputLengthNotEqual
     case EmptyBatch
     case BatchSizeLimitExceeded
-    case BatchUpdateEventLogForbidden
+    case BatchUpdateForbidden
     case InvalidUserId
     case InvalidItemId
     case InvalidItemIds
@@ -25,7 +25,7 @@ extension ZaiError: LocalizedError {
             return "Cannot log empty EventBatch object."
         case .BatchSizeLimitExceeded:
             return "The number of items in event batch exceeded the size limit."
-        case .BatchUpdateEventLogForbidden:
+        case .BatchUpdateForbidden:
             return "EventBatch instance does not support updateEventLog operation."
         case .InvalidUserId:
             return "Length of user id must be between 1 and 100."
