@@ -34,7 +34,7 @@ public class ZaiClient {
         }
     }
     
-    public func addEventLog(event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+    public func addEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
         let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
@@ -47,19 +47,19 @@ public class ZaiClient {
         }
     }
     
-    public func updateEventLog(event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) throws {
+    public func updateEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) throws {
         let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
         let payload = event.getPayload()
         
         if payload.count > 1 {
-            throw ZaiError.BatchUpdateEventLogForbidden
+            throw ZaiError.BatchUpdateForbidden
         }
         sendRequest(EventLoggerResponse.self, method: .put, url: url, payload: payload[0], headers: zaiHeaders, completionHandler: completionHandler)
     }
 
-    public func deleteEventLog(event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+    public func deleteEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
         let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
@@ -72,7 +72,7 @@ public class ZaiClient {
         }
     }
 
-    public func getRecommendations(recommendation: RecommendationRequest, completionHandler: @escaping (RecommendationResponse?, ZaiError.ClientError?) -> ()) {
+    public func getRecommendations(_ recommendation: RecommendationRequest, completionHandler: @escaping (RecommendationResponse?, ZaiError.ClientError?) -> ()) {
         let mlApiPathPrefix = String.init(format: Config.mlApiPathPrefix, self._zaiClientID)
         let url = "\(Config.mlApiEndPoint)\(mlApiPathPrefix)\(recommendation.getPathPrefix())"
         let zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: "\(mlApiPathPrefix)\(recommendation.getPathPrefix())")
