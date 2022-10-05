@@ -21,8 +21,7 @@
 		787E65EF28EC03A000647054 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		787E65F028EC03A000647054 /* ZaiClientRecommendationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZaiClientRecommendationTests.swift; sourceTree = "<group>"; };
 		BF3D77142FA8C8BADBF598D0 /* Pods-zaiclient_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-zaiclient_Tests.debug.xcconfig"; path = "Target Support Files/Pods-zaiclient_Tests/Pods-zaiclient_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		C2F4FB5DF39F1C14AB194F79 /* zaiclient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = zaiclient.podspec; path = ../zaiclient.podspec; sourceTree = "<group>"; };
-		CC3DB9AF621EEA526058707B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		C2F4FB5DF39F1C14AB194F79 /* zaiclient.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = zaiclient.podspec; path = ../zaiclient.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		ECD552DB0425F31CED28E181 /* Pods_zaiclient_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_zaiclient_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC99F6B88BB6EB1ACE732922 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,7 +89,6 @@
 			children = (
 				C2F4FB5DF39F1C14AB194F79 /* zaiclient.podspec */,
 				FC99F6B88BB6EB1ACE732922 /* README.md */,
-				CC3DB9AF621EEA526058707B /* LICENSE */,
 			);
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
