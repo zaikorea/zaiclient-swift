@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'zaiclient'
   s.version          = '0.1.0'
-  s.summary          = 'It is a REST client SDK that allows you to easily use Z.Ai API in Swift environment.'
+  s.summary          = 'REST client SDK that allows you to easily use Z.Ai API in Swift environment.'
 
   s.homepage         = 'https://github.com/zaikorea/zaiclient-swift'
   s.license          = 'Proprietary'
