@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7876A2E328ED5EF70056F02F"
+               BlueprintIdentifier = "7876A34528ED9C730056F02F"
                BuildableName = "zaiclient.framework"
                BlueprintName = "zaiclient"
                ReferencedContainer = "container:zaiclient.xcodeproj">
@@ -50,7 +50,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "7876A2E328ED5EF70056F02F"
+            BlueprintIdentifier = "7876A34528ED9C730056F02F"
             BuildableName = "zaiclient.framework"
             BlueprintName = "zaiclient"
             ReferencedContainer = "container:zaiclient.xcodeproj">
