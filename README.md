@@ -19,7 +19,7 @@ pod 'zaiclient'
 
 
 
-#### Swift Package Manager Install
+#### Swift Package Manager
 
 ```swift
 dependencies: [
@@ -29,7 +29,7 @@ dependencies: [
 
 Xcode 13.0+의 경우 zaiclient-swift github URL을 Package Dependency에 추가할 수 있습니다.
 
-```
+```swift
 https://github.com/zaikorea/zaiclient-swift.git
 ```
 
