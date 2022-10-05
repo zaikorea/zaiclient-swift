@@ -62,7 +62,7 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escap
     let expression = ["user_id": condition!]
     queryInput?.keyConditions = expression
 
-    zaiClient.addEventLog(event: event!) {
+    zaiClient.addEventLog(event!) {
         (res, error) in if let response = res {
             
             expect(response.failureCount).to(equal(0))
@@ -138,7 +138,7 @@ public func checkSuccessfulEventUpdate(event: BaseEvent?, newEvent: BaseEvent?, 
     let expression = ["user_id": condition!]
     queryInput?.keyConditions = expression
 
-    zaiClient.addEventLog(event: event!) {
+    zaiClient.addEventLog(event!) {
         (res, error) in if let response = res {
             
             expect(response.failureCount).to(equal(0))
@@ -152,7 +152,7 @@ public func checkSuccessfulEventUpdate(event: BaseEvent?, newEvent: BaseEvent?, 
                         expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
                         
                         do {
-                            try zaiClient.updateEventLog(event: newEvent!) {
+                            try zaiClient.updateEventLog(newEvent!) {
                                 (res, error) in if let response = res {
                                     expect(response.failureCount).to(equal(0))
                                     
@@ -212,7 +212,7 @@ public func checkSuccessfulEventDelete(event: BaseEvent?, completionHandler: @es
     let expression = ["user_id": condition!]
     queryInput?.keyConditions = expression
 
-    zaiClient.addEventLog(event: event!) {
+    zaiClient.addEventLog(event!) {
         (res, error) in if let response = res {
             
             expect(response.failureCount).to(equal(0))
@@ -225,7 +225,7 @@ public func checkSuccessfulEventDelete(event: BaseEvent?, completionHandler: @es
                         expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
                         expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
                         
-                        zaiClient.deleteEventLog(event: event!) {
+                        zaiClient.deleteEventLog(event!) {
                             (res, error) in if let response = res {
                                 expect(response.failureCount).to(equal(0))
                                 
@@ -263,7 +263,7 @@ func convertToDictionary(_ text: String?) -> [String: String]? {
 }
 
 public func checkSuccessfulRecommendation(recommendation: RecommendationRequest?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
-    zaiClient.getRecommendations(recommendation: recommendation!) {
+    zaiClient.getRecommendations(recommendation!) {
         (res, err) in if let response = res {
             let items = response.items
             expect(response.count).to(equal(recommendation?.limit))
