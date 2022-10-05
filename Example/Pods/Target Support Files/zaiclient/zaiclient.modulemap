@@ -1,0 +1,6 @@
+framework module zaiclient {
+  umbrella header "zaiclient-umbrella.h"
+
+  export *
+  module * { export * }
+}
