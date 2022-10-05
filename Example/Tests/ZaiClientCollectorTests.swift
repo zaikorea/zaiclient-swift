@@ -389,7 +389,7 @@ class ZaiClientCollectorSpec: QuickSpec {
             context("these will pass") {
                 it("addEventLog") {
                     var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), customEventType: "customEvent", customEventValue: generateQuery())
+                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateQuery())
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
@@ -400,7 +400,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("addEventLog with manual timestamp") {
                     var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), customEventType: "customEvent", customEventValue: generateQuery(), timestamp: Date().timeIntervalSince1970)
+                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateQuery(), timestamp: Date().timeIntervalSince1970)
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
@@ -411,7 +411,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("addBatchEventLog") {
                     var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), customEventType: "customEvent", customEventValues: Array(repeating: generateQuery(), count: 10))
+                    let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10))
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
@@ -422,7 +422,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("addBatchEventLog with manual timestamp") {
                     var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), customEventType: "customEvent", customEventValues: Array(repeating: generateQuery(), count: 10), timestamp: Date().timeIntervalSince1970)
+                    let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10), timestamp: Date().timeIntervalSince1970)
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
@@ -434,8 +434,8 @@ class ZaiClientCollectorSpec: QuickSpec {
                 it("updateEventLog") {
                     var flag = false
                     let userId = generateUUID()
-                    let event = try? CustomEvent(userId: userId, itemId: generateUUID(), customEventType: "customEvent", customEventValue: generateUUID())
-                    let newEvent = try? CustomEvent(userId: userId, itemId: generateUUID(), customEventType: "customEvent", customEventValue: generateUUID(), timestamp: event!.timestamp)
+                    let event = try? CustomEvent(userId: userId, itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID())
+                    let newEvent = try? CustomEvent(userId: userId, itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID(), timestamp: event!.timestamp)
                     
                     checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
                         (success, error) in if let _ = success {
@@ -447,7 +447,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("deleteEventLog") {
                     var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), customEventType: "customEvent", customEventValue: generateUUID())
+                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID())
 
                     checkSuccessfulEventDelete(event: e) {
                         (success, error) in if let _ = success {
