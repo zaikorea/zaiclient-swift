@@ -74,6 +74,7 @@ playground.xcworkspace
 # Carthage/Checkouts
 
 Carthage/Build/
+Example/Pods
 
 # Accio dependency management
 Dependencies/
