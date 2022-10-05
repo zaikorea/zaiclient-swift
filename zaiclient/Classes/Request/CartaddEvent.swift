@@ -5,6 +5,6 @@ public class CartaddEvent: BaseEvent {
     private let defaultEventValue: String = "null"
 
     public required init(userId: String, itemId: String, timestamp: Double = Date().timeIntervalSince1970) throws {
-        try super.init(userId: userId, itemIds: [itemId], eventType: defaultEventType, eventValues: [defaultEventValue], timestamp: timestamp)
+        try super.init(userId: userId, itemIds: [itemId], superEventType: defaultEventType, superEventValues: [defaultEventValue], timestamp: timestamp)
     }
 }

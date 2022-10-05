@@ -5,6 +5,6 @@ public class PageViewEvent: BaseEvent {
     private let defaultItemId: String = "null"
     
     public required init(userId: String, pageType: String, timestamp: Double = Date().timeIntervalSince1970) throws {
-        try super.init(userId: userId, itemIds: [defaultItemId], eventType: defaultEventType, eventValues: [pageType], timestamp: timestamp)
+        try super.init(userId: userId, itemIds: [defaultItemId], superEventType: defaultEventType, superEventValues: [pageType], timestamp: timestamp)
     }
 }

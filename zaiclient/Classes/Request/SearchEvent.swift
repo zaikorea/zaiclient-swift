@@ -5,6 +5,6 @@ public class SearchEvent: BaseEvent {
     private let defaultEventType: String = "search"
 
     public required init(userId: String, searchQuery: String, timestamp: Double = Date().timeIntervalSince1970) throws {
-        try super.init(userId: userId, itemIds: [defaultItemId], eventType: defaultEventType, eventValues: [searchQuery], timestamp: timestamp)
+        try super.init(userId: userId, itemIds: [defaultItemId], superEventType: defaultEventType, superEventValues: [searchQuery], timestamp: timestamp)
     }
 }

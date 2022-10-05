@@ -10,7 +10,7 @@ public class PurchaseEvent: BaseEvent {
             throw ZaiError.InputLengthNotEqual
         }
         
-        try super.init(userId: userId, itemIds: itemIds, eventType: defaultEventType, eventValues: prices.map {String($0)}, timestamp: timestamp)
+        try super.init(userId: userId, itemIds: itemIds, superEventType: defaultEventType, superEventValues: prices.map {String($0)}, timestamp: timestamp)
     }
     
     public convenience init(userId: String, itemId: String, price: Int, timestamp: Double = Date().timeIntervalSince1970) throws {
