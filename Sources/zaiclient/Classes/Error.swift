@@ -14,6 +14,7 @@ public enum ZaiError: Error {
     case InvalidEventType
     case InvalidEventValue
     case InvalidOptions
+    case InvalidCustomEndpoint
 }
 
 extension ZaiError: LocalizedError {
@@ -28,23 +29,25 @@ extension ZaiError: LocalizedError {
         case .BatchUpdateForbidden:
             return "EventBatch instance does not support updateEventLog operation."
         case .InvalidUserId:
-            return "Length of user id must be between 1 and 100."
+            return "Length of user id must be between 1 and 500."
         case .InvalidItemId:
-            return "Length of item id must be between 1 and 100."
+            return "Length of item id must be between 1 and 500."
         case .InvalidItemIds:
-            return "Length of item ids must be between 1 and 1000,000."
+            return "Length of item ids must be between 0 and 10,000."
         case .InvalidLimit:
-            return "Limit must be between 1 and 1000,000."
+            return "Limit must be between 0 and 10,000."
         case .InvalidOffset:
-            return "Offset must be between 0 and 1000,000."
+            return "Offset must be between 0 and 10,000."
         case .InvalidRecommendationType:
-            return "Length of recommendation type must be between 1 and 100."
+            return "Length of recommendation type must be between 1 and 500."
         case .InvalidEventType:
-            return "Length of event type must be between 0 and 100."
+            return "Length of event type must be between 1 and 500."
         case .InvalidEventValue:
-            return "Length of event value must be between 0 and 100."
+            return "Length of event value must be between 1 and 500."
         case .InvalidOptions:
             return "Length of options must be between 0 and 1000."
+        case .InvalidCustomEndpoint:
+            return "Only alphanumeric characters below than 10 are allowed for custom endpoint."
         }
     }
 }

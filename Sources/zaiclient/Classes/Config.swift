@@ -1,10 +1,10 @@
 import Foundation
 
 public struct Config {
-    public static let eventsApiEndPoint: String = "https://collector-api.zaikorea.org"
+    public static let eventsApiEndPoint: String = "https://collector-api%@.zaikorea.org"
     public static let eventsApiPath: String = "/events"
     
-    public static let mlApiEndPoint: String = "https://ml-api.zaikorea.org"
+    public static let mlApiEndPoint: String = "https://ml-api%@.zaikorea.org"
     public static let mlApiPathPrefix: String = "/clients/%@/recommenders"
     public static let userRecommendationPathPrefix: String = "/user-recommendations"
     public static let relatedItemsRecommendationPathPrefix: String = "/related-items"

@@ -7,19 +7,19 @@ open class BaseEvent {
     
     init(userId: String, itemIds: [String], superEventType: String, superEventValues: [String], timestamp: Double) throws {
         // Input validation
-        if !(1...100).contains(userId.count) {
+        guard (1...500).contains(userId.count) else {
             throw ZaiError.InvalidUserId
         }
         for itemId in itemIds {
-            if !(1...100).contains(itemId.count) {
+            guard (1...500).contains(itemId.count) else {
                 throw ZaiError.InvalidItemId
             }
         }
-        if !(0...100).contains(superEventType.count) {
+        guard (1...500).contains(superEventType.count) else {
             throw ZaiError.InvalidEventType
         }
         for eventValue in superEventValues {
-            if !(0...100).contains(eventValue.count) {
+            guard (1...).contains(eventValue.count) else {
                 throw ZaiError.InvalidEventValue
             }
         }
@@ -30,7 +30,7 @@ open class BaseEvent {
         var tmpTimestamp = timestamp
         
         for (itemId, eventValue) in zip(itemIds, superEventValues) {
-            events.append(Event(userId: userId, itemId: itemId, timestamp: tmpTimestamp, eventType: superEventType, eventValue: eventValue))
+            events.append(Event(userId: userId, itemId: itemId, timestamp: tmpTimestamp, eventType: superEventType, eventValue: String(eventValue.prefix(500))))
             tmpTimestamp += Config.epsilon
         }
         

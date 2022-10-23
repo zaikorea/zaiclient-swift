@@ -6,13 +6,27 @@ public class ZaiClient {
     var _zaiSecret: String
     var _timeout: Double
     var _sessionManager: Alamofire.Session
+    var _mlApiEndpoint: String
+    var _eventsApiEndpoint: String
     
-    public init(zaiClientID: String, zaiSecret: String, timeout: Double = Config.timeout) {
+    public init(zaiClientID: String, zaiSecret: String, timeout: Double = Config.timeout, customEndpoint: String = "") throws {
         self._zaiClientID = zaiClientID
         self._zaiSecret = zaiSecret
         self._timeout = timeout
         self._sessionManager = Alamofire.Session.default
         _sessionManager.session.configuration.timeoutIntervalForRequest = self._timeout > 0 ? self._timeout : Config.timeout
+        
+        guard let _ = customEndpoint.range(of: "^[a-zA-Z0-9-]*$", options: .regularExpression) else {
+            throw ZaiError.InvalidCustomEndpoint
+        }
+        
+        guard (0...10).contains(customEndpoint.count) else {
+            throw ZaiError.InvalidCustomEndpoint
+        }
+        
+        let _customEndpoint = customEndpoint == "" ? customEndpoint : "-\(customEndpoint)"
+        self._mlApiEndpoint = String.init(format: Config.mlApiEndPoint, _customEndpoint)
+        self._eventsApiEndpoint = String.init(format: Config.eventsApiEndPoint, _customEndpoint)
     }
     
     private func sendRequest<D: Encodable, R: Decodable>(_ type: R.Type, method: HTTPMethod, url: String, payload: D, headers: HTTPHeaders, completionHandler: @escaping (_ response: R?,_ error: ZaiError.ClientError?) -> ()) {
@@ -35,7 +49,7 @@ public class ZaiClient {
     }
     
     public func addEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
-        let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
+        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
         let payload = event.getPayload()
@@ -48,7 +62,7 @@ public class ZaiClient {
     }
     
     public func updateEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) throws {
-        let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
+        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
         let payload = event.getPayload()
@@ -60,7 +74,7 @@ public class ZaiClient {
     }
 
     public func deleteEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
-        let url = "\(Config.eventsApiEndPoint)\(Config.eventsApiPath)"
+        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
         let payload = event.getPayload()
@@ -74,7 +88,7 @@ public class ZaiClient {
 
     public func getRecommendations(_ recommendation: RecommendationRequest, completionHandler: @escaping (RecommendationResponse?, ZaiError.ClientError?) -> ()) {
         let mlApiPathPrefix = String.init(format: Config.mlApiPathPrefix, self._zaiClientID)
-        let url = "\(Config.mlApiEndPoint)\(mlApiPathPrefix)\(recommendation.getPathPrefix())"
+        let url = "\(self._mlApiEndpoint)\(mlApiPathPrefix)\(recommendation.getPathPrefix())"
         let zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: "\(mlApiPathPrefix)\(recommendation.getPathPrefix())")
 
         sendRequest(RecommendationResponse.self, method: .post, url: url, payload: recommendation, headers: zaiHeaders, completionHandler: completionHandler)
