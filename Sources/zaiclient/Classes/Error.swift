@@ -47,7 +47,7 @@ extension ZaiError: LocalizedError {
         case .InvalidOptions:
             return "Length of options must be between 0 and 1000."
         case .InvalidCustomEndpoint:
-            return "Only alphanumeric characters below than 10 are allowed for custom endpoint."
+            return "Only alphanumeric characters of length up to 10 are allowed for custom endpoint."
         }
     }
 }
