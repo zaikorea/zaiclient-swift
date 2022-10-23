@@ -100,8 +100,6 @@ class ZaiClientRecommendationSpec: QuickSpec {
                 it("userId, limit, options") {
                     var flag = false
                     let options = generateOptions(n: 10)
-                    print("original options")
-                    print(options)
                     let recommendation = try? UserRecommendationRequest(userId: generateUUID(), limit: generateRandomInt(min: 1, max: 50), options: options)
                     checkSuccessfulRecommendation(recommendation: recommendation) {
                         (success, error) in if let _ = success {

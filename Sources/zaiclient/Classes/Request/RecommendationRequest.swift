@@ -22,36 +22,36 @@ public class RecommendationRequest: Encodable {
     
     init(userId: String? = nil, itemId: String? = nil, itemIds: [String]? = nil, limit: Int, offset: Int, recommendationType: String, options: String? = nil) throws {
         if let _userId = userId {
-            if !(1...100).contains(_userId.count) {
+            guard (1...500).contains(_userId.count) else {
                 throw ZaiError.InvalidUserId
             }
         }
         if let _itemId = itemId {
-            if !(1...100).contains(_itemId.count) {
+            guard (1...500).contains(_itemId.count) else {
                 throw ZaiError.InvalidItemId
             }
         }
         if let _itemIds = itemIds {
-            if !(1...1_000_000).contains(_itemIds.count) {
+            guard (0...10_000).contains(_itemIds.count) else {
                 throw ZaiError.InvalidItemIds
             }
             for id in _itemIds {
-                if !(1...100).contains(id.count) {
+                guard (1...500).contains(id.count) else {
                     throw ZaiError.InvalidItemId
                 }
             }
         }
-        if !(1...1_000_000).contains(limit) {
+        guard (0...10_000).contains(limit) else {
             throw ZaiError.InvalidLimit
         }
-        if !(0...1_000_000).contains(offset) {
+        guard (0...10_000).contains(offset) else {
             throw ZaiError.InvalidOffset
         }
-        if !(1...100).contains(recommendationType.count) {
+        guard (1...500).contains(recommendationType.count) else {
             throw ZaiError.InvalidRecommendationType
         }
         if let _options = options {
-            if !(0...1000).contains(_options.count) {
+            guard (0...1000).contains(_options.count) else {
                 throw ZaiError.InvalidOptions
             }
         }
