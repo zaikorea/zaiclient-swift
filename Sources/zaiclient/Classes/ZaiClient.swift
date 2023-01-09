@@ -43,7 +43,11 @@ public class ZaiClient {
                     completionHandler(nil, error as? ZaiError.ClientError)
                 }
             case .failure:
-                completionHandler(nil, ZaiError.ClientError(message: String(data: response.data!, encoding: .utf8), httpStatusCode: response.response?.statusCode))
+                if let d = response.data {
+                    completionHandler(nil, ZaiError.ClientError(message: String(data: d, encoding: .utf8), httpStatusCode: response.response?.statusCode))
+                } else {
+                    completionHandler(nil, ZaiError.ClientError(message: ZaiError.NetworkError.errorDescription, httpStatusCode: response.response?.statusCode))
+                }
             }
         }
     }
