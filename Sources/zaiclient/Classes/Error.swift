@@ -15,6 +15,7 @@ public enum ZaiError: Error {
     case InvalidEventValue
     case InvalidOptions
     case InvalidCustomEndpoint
+    case NetworkError
 }
 
 extension ZaiError: LocalizedError {
@@ -48,6 +49,8 @@ extension ZaiError: LocalizedError {
             return "Length of options must be between 0 and 1000."
         case .InvalidCustomEndpoint:
             return "Only alphanumeric characters of length up to 10 are allowed for custom endpoint."
+        case .NetworkError:
+            return "ZaiClient network connection failed."
         }
     }
 }
