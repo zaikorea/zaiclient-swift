@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'zaiclient'
-  s.version          = '0.2.0'
+  s.version          = '0.2.1'
   s.summary          = 'REST client SDK that allows you to easily use Z.Ai API in Swift environment.'
 
   s.homepage         = 'https://github.com/zaikorea/zaiclient-swift'
