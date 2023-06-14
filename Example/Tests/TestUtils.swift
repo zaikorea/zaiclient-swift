@@ -77,7 +77,7 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
                             let ddbExpirationTime = Int(ddbResponse.items![0]["expiration_time"]?.n ?? "0") ?? 0
                             
                             if (isTest) {
-                                expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 23))
+                                expect(ddbExpirationTime - ddbTimestamp).to(beLessThanOrEqualTo(60 * 60 * 25))
                             } else {
                                 expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 24 * 364))
                             }
@@ -109,7 +109,7 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
                                 
                                 if (isTest) {
                                     print(ddbExpirationTime - ddbTimestamp)
-                                    expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 23))
+                                    expect(ddbExpirationTime - ddbTimestamp).to(beLessThanOrEqualTo(60 * 60 * 25))
                                 } else {
                                     expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 24 * 364))
                                 }
