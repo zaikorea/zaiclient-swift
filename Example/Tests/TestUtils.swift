@@ -42,7 +42,7 @@ public func generateOptions(n: Int) -> [String: String] {
     return options
 }
 
-public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
     AWSServiceManager.default().defaultServiceConfiguration = AWSServiceConfiguration(region: .APNortheast2, credentialsProvider: awsCredentials)
     let queryInput = AWSDynamoDBQueryInput()
     queryInput?.tableName = "events_\(clientId)"
@@ -61,7 +61,7 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escap
     do {
         let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret)
 
-        zaiClient.addEventLog(event!) {
+        zaiClient.addEventLog(event!, isTest: isTest) {
             (res, error) in if let response = res {
                 
                 expect(response.failureCount).to(equal(0))
@@ -72,7 +72,15 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escap
                         (ddbRes, ddbError) in if let ddbResponse = ddbRes {
                             expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
                             expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
-
+                            
+                            let ddbTimestamp = Int(Float(ddbResponse.items![0]["timestamp"]?.n ?? "0") ?? 0)
+                            let ddbExpirationTime = Int(ddbResponse.items![0]["expiration_time"]?.n ?? "0") ?? 0
+                            
+                            if (isTest) {
+                                expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 23))
+                            } else {
+                                expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 24 * 364))
+                            }
                             let deleteInput = AWSDynamoDBDeleteItemInput()
                             deleteInput?.tableName = "events_\(clientId)"
                             deleteInput?.key = ["user_id": keyVal!, "timestamp": ddbResponse.items![0]["timestamp"]!]
@@ -95,6 +103,16 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escap
                             
                             for res in ddbResponse.items! {
                                 expect(res["event_type"]?.s).to(equal(events![0].eventType))
+                                
+                                let ddbTimestamp = Int(Float(res["timestamp"]?.n ?? "0") ?? 0)
+                                let ddbExpirationTime = Int(res["expiration_time"]?.n ?? "0") ?? 0
+                                
+                                if (isTest) {
+                                    print(ddbExpirationTime - ddbTimestamp)
+                                    expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 23))
+                                } else {
+                                    expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 24 * 364))
+                                }
                                 
                                 let deleteInput = AWSDynamoDBDeleteItemInput()
                                 deleteInput?.tableName = "events_\(clientId)"
@@ -120,151 +138,6 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, completionHandler: @escap
     } catch let error {
         fail()
         print(error)
-    }
-}
-
-public func checkSuccessfulEventUpdate(event: BaseEvent?, newEvent: BaseEvent?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
-    
-    AWSServiceManager.default().defaultServiceConfiguration = AWSServiceConfiguration(region: .APNortheast2, credentialsProvider: awsCredentials)
-    let queryInput = AWSDynamoDBQueryInput()
-    queryInput?.tableName = "events_\(clientId)"
-    
-    let condition = AWSDynamoDBCondition()
-    condition?.comparisonOperator = AWSDynamoDBComparisonOperator.EQ
-    
-    let events = event?.getPayload()
-    let newEvents = newEvent?.getPayload()
-    
-    let keyVal = AWSDynamoDBAttributeValue()
-    keyVal?.s = events![0].userId
-    condition?.attributeValueList = [keyVal!]
-    let expression = ["user_id": condition!]
-    queryInput?.keyConditions = expression
-    
-    do {
-        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret)
-
-        zaiClient.addEventLog(event!) {
-            (res, error) in if let response = res {
-                
-                expect(response.failureCount).to(equal(0))
-                
-                if events?.count == 1 {
-                    let e = events![0]
-                    dynamodb.query(queryInput!) {
-                        (ddbRes, ddbError) in if let ddbResponse = ddbRes {
-                            expect(ddbResponse.items![0]["item_id"]?.s).to(equal(e.itemId))
-                            expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
-                            expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
-                            
-                            do {
-                                try zaiClient.updateEventLog(newEvent!) {
-                                    (res, error) in if let response = res {
-                                        expect(response.failureCount).to(equal(0))
-                                        
-                                        let e = newEvents![0]
-                                        dynamodb.query(queryInput!) {
-                                            (ddbRes, ddbError) in if let ddbResponse = ddbRes {
-                                                expect(ddbResponse.items![0]["item_id"]?.s).to(equal(e.itemId))
-                                                expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
-                                                expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
-                                                
-                                                let deleteInput = AWSDynamoDBDeleteItemInput()
-                                                deleteInput?.tableName = "events_\(clientId)"
-                                                deleteInput?.key = ["user_id": keyVal!, "timestamp": ddbResponse.items![0]["timestamp"]!]
-                                                dynamodb.deleteItem(deleteInput!) {
-                                                    (res, err) in if let error = err {
-                                                        print(error.localizedDescription)
-                                                        fail()
-                                                    }
-                                                }
-                                                
-                                                completionHandler(true, nil)
-                                            } else {
-                                                fail()
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch {
-                                fail()
-                            }
-                        } else {
-                            fail()
-                        }
-                    }
-                    
-                }
-            } else {
-                fail()
-            }
-        }
-    } catch let error {
-        fail()
-        print(error)
-    }
-}
-
-public func checkSuccessfulEventDelete(event: BaseEvent?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
-    
-    AWSServiceManager.default().defaultServiceConfiguration = AWSServiceConfiguration(region: .APNortheast2, credentialsProvider: awsCredentials)
-    let queryInput = AWSDynamoDBQueryInput()
-    queryInput?.tableName = "events_\(clientId)"
-    
-    let condition = AWSDynamoDBCondition()
-    condition?.comparisonOperator = AWSDynamoDBComparisonOperator.EQ
-    
-    let events = event?.getPayload()
-    
-    let keyVal = AWSDynamoDBAttributeValue()
-    keyVal?.s = events![0].userId
-    condition?.attributeValueList = [keyVal!]
-    let expression = ["user_id": condition!]
-    queryInput?.keyConditions = expression
-    
-    do {
-        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret)
-
-        zaiClient.addEventLog(event!) {
-            (res, error) in if let response = res {
-                
-                expect(response.failureCount).to(equal(0))
-                
-                if events?.count == 1 {
-                    let e = events![0]
-                    dynamodb.query(queryInput!) {
-                        (ddbRes, ddbError) in if let ddbResponse = ddbRes {
-                            expect(ddbResponse.items![0]["item_id"]?.s).to(equal(e.itemId))
-                            expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
-                            expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
-                            
-                            zaiClient.deleteEventLog(event!) {
-                                (res, error) in if let response = res {
-                                    expect(response.failureCount).to(equal(0))
-                                    
-                                    dynamodb.query(queryInput!) {
-                                        (ddbRes, ddbError) in if let ddbResponse = ddbRes {
-                                            expect(ddbResponse.items?.count).to(equal(0))
-                                            completionHandler(true, nil)
-                                        } else {
-                                            fail()
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            fail()
-                        }
-                    }
-                    
-                }
-            } else {
-                fail()
-            }
-        }
-    } catch let error {
-        print(error)
-        fail()
     }
 }
 

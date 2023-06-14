@@ -52,41 +52,16 @@ public class ZaiClient {
         }
     }
     
-    public func addEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+    public func addEventLog(_ event: BaseEvent, isTest: Bool = false, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
         let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
         var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
         zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
-        let payload = event.getPayload()
+        let payload = event.getPayload(isTest: isTest)
         
         if payload.count == 1 {
             sendRequest(EventLoggerResponse.self, method: .post, url: url, payload: payload[0], headers: zaiHeaders, completionHandler: completionHandler)
         } else {
             sendRequest(EventLoggerResponse.self, method: .post, url: url, payload: payload, headers: zaiHeaders, completionHandler: completionHandler)
-        }
-    }
-    
-    public func updateEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) throws {
-        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
-        var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
-        zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
-        let payload = event.getPayload()
-        
-        if payload.count > 1 {
-            throw ZaiError.BatchUpdateForbidden
-        }
-        sendRequest(EventLoggerResponse.self, method: .put, url: url, payload: payload[0], headers: zaiHeaders, completionHandler: completionHandler)
-    }
-
-    public func deleteEventLog(_ event: BaseEvent, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
-        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
-        var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
-        zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
-        let payload = event.getPayload()
-
-        if payload.count == 1 {
-            sendRequest(EventLoggerResponse.self, method: .delete, url: url, payload: payload[0], headers: zaiHeaders, completionHandler: completionHandler)
-        } else {
-            sendRequest(EventLoggerResponse.self, method: .delete, url: url, payload: payload, headers: zaiHeaders, completionHandler: completionHandler)
         }
     }
 
