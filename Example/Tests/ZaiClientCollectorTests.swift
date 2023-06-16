@@ -30,24 +30,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
-                it("updateEventLog") {
-                    var flag = false
-                    let userId = generateUUID()
-                    let event = try? ProductDetailViewEvent(userId: userId, itemId: generateUUID())
-                    let newEvent = try? ProductDetailViewEvent(userId: userId, itemId: generateUUID(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
                     let e = try? ProductDetailViewEvent(userId: generateUUID(), itemId: generateUUID())
-                    checkSuccessfulEventDelete(event: e) {
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -81,24 +67,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
-                it("updateEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
-                    let userId = generateUUID()
-                    let event = try? PageViewEvent(userId: userId, pageType: generatePageType())
-                    let newEvent = try? PageViewEvent(userId: userId, pageType: generatePageType(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
-                    var flag = false
-                    let e = try? PageViewEvent(userId: generateUUID(), pageType: generatePageType())
-                    checkSuccessfulEventDelete(event: e) {
+                    let e = try? PageViewEvent(userId: generateUUID(), pageType: generateUUID())
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -132,24 +104,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
-                it("updateEventLog") {
-                    var flag = false
-                    let userId = generateUUID()
-                    let event = try? LikeEvent(userId: userId, itemId: generateUUID())
-                    let newEvent = try? LikeEvent(userId: userId, itemId: generateUUID(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
                     let e = try? LikeEvent(userId: generateUUID(), itemId: generateUUID())
-                    checkSuccessfulEventDelete(event: e) {
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -182,25 +140,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     }
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
-                
-                it("updateEventLog") {
-                    var flag = false
-                    let userId = generateUUID()
-                    let event = try? CartaddEvent(userId: userId, itemId: generateUUID())
-                    let newEvent = try? CartaddEvent(userId: userId, itemId: generateUUID(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
                     let e = try? CartaddEvent(userId: generateUUID(), itemId: generateUUID())
-                    checkSuccessfulEventDelete(event: e) {
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -233,25 +176,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     }
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
-                
-                it("updateEventLog") {
-                    var flag = false
-                    let userId = generateUUID()
-                    let event = try? RateEvent(userId: userId, itemId: generateUUID(), rating: generateRandomDouble(min: 0, max: 5))
-                    let newEvent = try? RateEvent(userId: userId, itemId: generateUUID(), rating: generateRandomDouble(min: 0, max: 5), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
                     let e = try? RateEvent(userId: generateUUID(), itemId: generateUUID(), rating: generateRandomDouble(min: 0, max: 5))
-                    checkSuccessfulEventDelete(event: e) {
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -284,25 +212,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     }
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
-                
-                it("updateEventLog") {
-                    var flag = false
-                    let userId = generateUUID()
-                    let event = try? SearchEvent(userId: userId, searchQuery: generateQuery())
-                    let newEvent = try? SearchEvent(userId: userId, searchQuery: generateQuery(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
+                it("addEventLog with isTest true") {
                     var flag = false
                     let e = try? SearchEvent(userId: generateUUID(), searchQuery: generateQuery())
-                    checkSuccessfulEventDelete(event: e) {
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -336,6 +249,17 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
+                it("addEventLog with isTest true") {
+                    var flag = false
+                    let e = try? PurchaseEvent(userId: generateUUID(), itemId: generateUUID(), price: generateRandomInt(min: 0, max: 500000))
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
+                        (success, error) in if let _ = success {
+                            flag = true
+                        }
+                    }
+                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
+                }
+                
                 it("addBatchEventLog") {
                     var flag = false
                     let e = try? PurchaseEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), prices: Array(repeating: generateRandomInt(min: 0, max: 500000), count: 10))
@@ -358,24 +282,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
-                it("updateEventLog") {
+                it("addBatchEventLog with isTest true") {
                     var flag = false
-                    let userId = generateUUID()
-                    let event = try? PurchaseEvent(userId: userId, itemId: generateUUID(), price: generateRandomInt(min: 0, max: 500000))
-                    let newEvent = try? PurchaseEvent(userId: userId, itemId: generateUUID(), price: generateRandomInt(min: 0, max: 500000), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
-                    var flag = false
-                    let e = try? PurchaseEvent(userId: generateUUID(), itemId: generateUUID(), price: generateRandomInt(min: 0, max: 5000000))
-                    checkSuccessfulEventDelete(event: e) {
+                    let e = try? PurchaseEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), prices: Array(repeating: generateRandomInt(min: 0, max: 500000), count: 10))
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
@@ -409,6 +319,17 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
+                it("addEventLog with isTest true") {
+                    var flag = false
+                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateQuery())
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
+                        (success, error) in if let _ = success {
+                            flag = true
+                        }
+                    }
+                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
+                }
+                
                 it("addBatchEventLog") {
                     var flag = false
                     let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10))
@@ -431,25 +352,10 @@ class ZaiClientCollectorSpec: QuickSpec {
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
                 
-                it("updateEventLog") {
+                it("addBatchEventLog with isTest true") {
                     var flag = false
-                    let userId = generateUUID()
-                    let event = try? CustomEvent(userId: userId, itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID())
-                    let newEvent = try? CustomEvent(userId: userId, itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID(), timestamp: event!.timestamp)
-                    
-                    checkSuccessfulEventUpdate(event: event, newEvent: newEvent) {
-                        (success, error) in if let _ = success {
-                            flag = true
-                        }
-                    }
-                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
-                }
-                
-                it("deleteEventLog") {
-                    var flag = false
-                    let e = try? CustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateUUID())
-
-                    checkSuccessfulEventDelete(event: e) {
+                    let e = try? CustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10))
+                    checkSuccessfulEventAdd(event: e, isTest: true) {
                         (success, error) in if let _ = success {
                             flag = true
                         }
