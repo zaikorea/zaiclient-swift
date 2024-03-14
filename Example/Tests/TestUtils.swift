@@ -42,7 +42,7 @@ public func generateOptions(n: Int) -> [String: String] {
     return options
 }
 
-public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+public func checkSuccessfulEventAdd(event: EventRequest?, isTest: Bool = false, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
     AWSServiceManager.default().defaultServiceConfiguration = AWSServiceConfiguration(region: .APNortheast2, credentialsProvider: awsCredentials)
     let queryInput = AWSDynamoDBQueryInput()
     queryInput?.tableName = "events_\(clientId)"
@@ -59,9 +59,9 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
     queryInput?.keyConditions = expression
     
     do {
-        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret)
+        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
 
-        zaiClient.addEventLog(event!, isTest: isTest) {
+        zaiClient.sendRequest(event!, isTest: isTest) {
             (res, error) in if let response = res {
                 
                 expect(response.failureCount).to(equal(0))
@@ -72,6 +72,12 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
                         (ddbRes, ddbError) in if let ddbResponse = ddbRes {
                             expect(ddbResponse.items![0]["event_value"]?.s).to(equal(e.eventValue))
                             expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
+                            expect(ddbResponse.items![0]["is_zai_recommendation"]?.boolean == 1).to(equal(e.isZaiRec))
+                            if (e.from == nil) {
+                                expect(ddbResponse.items![0]["from"]?.s).to(beNil())
+                            } else {
+                                expect(ddbResponse.items![0]["from"]?.s).to(equal(e.from))
+                            }
                             
                             let ddbTimestamp = Int(Float(ddbResponse.items![0]["timestamp"]?.n ?? "0") ?? 0)
                             let ddbExpirationTime = Int(ddbResponse.items![0]["expiration_time"]?.n ?? "0") ?? 0
@@ -108,7 +114,6 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
                                 let ddbExpirationTime = Int(res["expiration_time"]?.n ?? "0") ?? 0
                                 
                                 if (isTest) {
-                                    print(ddbExpirationTime - ddbTimestamp)
                                     expect(ddbExpirationTime - ddbTimestamp).to(beLessThanOrEqualTo(60 * 60 * 25))
                                 } else {
                                     expect(ddbExpirationTime - ddbTimestamp).to(beGreaterThanOrEqualTo(60 * 60 * 24 * 364))
@@ -132,6 +137,7 @@ public func checkSuccessfulEventAdd(event: BaseEvent?, isTest: Bool = false, com
                     }
                 }
             } else {
+                print(error)
                 fail()
             }
         }
@@ -176,7 +182,7 @@ public func checkSuccessfulRecommendation(recommendation: RecommendationRequest?
     do {
         let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret)
 
-        zaiClient.getRecommendations(recommendation!) {
+        zaiClient.sendRequest(recommendation!) {
             (res, err) in if let response = res {
                 let metadata = try? JSONDecoder().decode(Metadata.self, from: response.metadata.data(using: .utf8)!)
                 expect(response.count).to(equal(recommendation?.limit))
@@ -199,6 +205,42 @@ public func checkSuccessfulRecommendation(recommendation: RecommendationRequest?
         }
     } catch let error {
         print(error)
+        fail()
+    }
+}
+
+
+public func checkSuccessfulItemRequest(request: ItemRequest?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+    do {
+        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
+
+        zaiClient.sendRequest(request!) {
+            (res, err) in if let response = res {
+                completionHandler(true, nil)
+            } else {
+                print(err?.message)
+                fail()
+            }
+        }
+    } catch let error {
+        print(error)
+        fail()
+    }
+}
+
+public func checkSuccessfulBatchDeleteItem(request: [ItemRequest]?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+    do {
+        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
+
+        zaiClient.sendRequest(request!) {
+            (res, err) in if let response = res {
+                completionHandler(true, nil)
+            } else {
+                print(err?.message)
+                fail()
+            }
+        }
+    } catch let error {
         fail()
     }
 }

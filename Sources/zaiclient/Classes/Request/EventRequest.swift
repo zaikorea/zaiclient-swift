@@ -1,14 +1,16 @@
 import Foundation
 
-open class BaseEvent {
+open class EventRequest: Request {
 
     public var timestamp: Double
     private var userId: String
     private var itemIds: [String]
     private var superEventType: String
     private var superEventValues: [String]
+    private var superFroms: [String]
+    private var superIsZaiRecs: [Bool]
     
-    init(userId: String, itemIds: [String], superEventType: String, superEventValues: [String], timestamp: Double) throws {
+    init(userId: String, itemIds: [String], superEventType: String, superEventValues: [String], timestamp: Double, superFroms: [String], superIsZaiRecs: [Bool]) throws {
         // Input validation
         guard (1...500).contains(userId.count) else {
             throw ZaiError.InvalidUserId
@@ -39,20 +41,30 @@ open class BaseEvent {
         self.superEventType = superEventType
         self.superEventValues = superEventValues
         self.timestamp = timestamp
+        self.superFroms = superFroms
+        self.superIsZaiRecs = superIsZaiRecs
         
+        super.init(method: .post, baseUrl: Config.collectorApiEndPoint)
     }
     
-    public func getPayload(isTest: Bool = false) -> [Event] {
+    override func getPath(clientId: String) -> String {
+        return Config.eventsApiPath
+    }
+    
+    override public func getPayload(isTest: Bool = false) -> [Event] {
         var events: [Event] = []
 
         var tmpTimestamp = timestamp
         
-        for (itemId, eventValue) in zip(itemIds, superEventValues) {
+        for idx in 0..<itemIds.count{
             let timeToLive: Int? = (isTest) ? 60 * 60 * 24 : nil
-            events.append(Event(userId: userId, itemId: itemId, timestamp: tmpTimestamp, eventType: superEventType, eventValue: String(eventValue.prefix(500)), timeToLive: timeToLive))
+            let _from: String? = (superFroms[idx].count == 0) ? nil : String(superFroms[idx].prefix(500))
+            
+            events.append(Event(userId: userId, itemId: itemIds[idx], timestamp: tmpTimestamp, eventType: superEventType, eventValue: String(superEventValues[idx].prefix(500)), timeToLive: timeToLive, from: _from, isZaiRec: superIsZaiRecs[idx]))
             tmpTimestamp += Config.epsilon
         }
         
         return events
     }
+    
 }

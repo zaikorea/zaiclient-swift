@@ -6,9 +6,8 @@ public class ZaiClient {
     var _zaiSecret: String
     var _timeout: Double
     var _sessionManager: Alamofire.Session
-    var _mlApiEndpoint: String
-    var _eventsApiEndpoint: String
-    
+    var _customEndpoint: String
+
     public init(zaiClientID: String, zaiSecret: String, timeout: Double = Config.timeout, customEndpoint: String = "") throws {
         self._zaiClientID = zaiClientID
         self._zaiSecret = zaiSecret
@@ -23,15 +22,19 @@ public class ZaiClient {
         guard (0...10).contains(customEndpoint.count) else {
             throw ZaiError.InvalidCustomEndpoint
         }
-        
-        let _customEndpoint = customEndpoint == "" ? customEndpoint : "-\(customEndpoint)"
-        self._mlApiEndpoint = String.init(format: Config.mlApiEndPoint, _customEndpoint)
-        self._eventsApiEndpoint = String.init(format: Config.eventsApiEndPoint, _customEndpoint)
+        self._customEndpoint = customEndpoint == "" ? customEndpoint : "-\(customEndpoint)"
     }
     
-    private func sendRequest<D: Encodable, R: Decodable>(_ type: R.Type, method: HTTPMethod, url: String, payload: D, headers: HTTPHeaders, completionHandler: @escaping (_ response: R?,_ error: ZaiError.ClientError?) -> ()) {
+    private func _sendRequest<D: Encodable, R: Decodable>(_ type: R.Type, method: HTTPMethod, baseUrl: String, path: String, payload: D, params: Parameters = [:], completionHandler: @escaping (_ response: R?,_ error: ZaiError.ClientError?) -> ()) {
+
+        let processedBaseUrl = String.init(format: baseUrl, _customEndpoint)
+        let zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: path)
         
-        self._sessionManager.request(url, method: method, parameters: payload, encoder: JSONParameterEncoder.default, headers: headers)
+        let request = (params.isEmpty) ?
+                self._sessionManager.request("\(processedBaseUrl)\(path)", method: method, parameters: payload, encoder: JSONParameterEncoder.default, headers: zaiHeaders) :
+                self._sessionManager.request("\(processedBaseUrl)\(path)", method: method, parameters: params, encoding: URLEncoding(arrayEncoding: .noBrackets), headers: zaiHeaders)
+
+        request
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .responseData { response in switch response.result {
@@ -51,25 +54,50 @@ public class ZaiClient {
             }
         }
     }
+
+    public func sendRequest(_ request: EventRequest, isTest: Bool = false, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+         let payload = request.getPayload(isTest: isTest)
+         
+         if payload.count == 1 {
+             _sendRequest(EventLoggerResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: payload[0], completionHandler: completionHandler)
+         } else {
+             _sendRequest(EventLoggerResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: payload, completionHandler: completionHandler)
+         }
+    }
     
-    public func addEventLog(_ event: BaseEvent, isTest: Bool = false, completionHandler: @escaping (EventLoggerResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
-        let url = "\(self._eventsApiEndpoint)\(Config.eventsApiPath)"
-        var zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: Config.eventsApiPath)
-        zaiHeaders.add(HTTPHeader(name: Config.zaiCallTypeHeader, value: Config.zaiCallType))
-        let payload = event.getPayload(isTest: isTest)
-        
-        if payload.count == 1 {
-            sendRequest(EventLoggerResponse.self, method: .post, url: url, payload: payload[0], headers: zaiHeaders, completionHandler: completionHandler)
+    public func sendRequest(_ request: RecommendationRequest, completionHandler: @escaping (RecommendationResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+        _sendRequest(RecommendationResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, completionHandler: completionHandler)
+    }
+    
+    public func sendRequest(_ request: ItemRequest, completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+        if (request.self is DeleteItem) {
+            _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, params: request.getQueryParam(), completionHandler: completionHandler)
         } else {
-            sendRequest(EventLoggerResponse.self, method: .post, url: url, payload: payload, headers: zaiHeaders, completionHandler: completionHandler)
+            _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, completionHandler: completionHandler)
         }
     }
+    
+    public func sendRequest(_ requests: [ItemRequest], completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
 
-    public func getRecommendations(_ recommendation: RecommendationRequest, completionHandler: @escaping (RecommendationResponse?, ZaiError.ClientError?) -> ()) {
-        let mlApiPathPrefix = String.init(format: Config.mlApiPathPrefix, self._zaiClientID)
-        let url = "\(self._mlApiEndpoint)\(mlApiPathPrefix)\(recommendation.getPathPrefix())"
-        let zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: "\(mlApiPathPrefix)\(recommendation.getPathPrefix())")
-
-        sendRequest(RecommendationResponse.self, method: .post, url: url, payload: recommendation, headers: zaiHeaders, completionHandler: completionHandler)
+        if requests.count > Config.batchRequestCap {
+            return completionHandler(nil, ZaiError.ClientError(message: "The number of items in batch exceeded the size limit."))
+        }
+        
+        if (!requests.allSatisfy({ type(of: $0) == type(of: requests[0])})) {
+            return completionHandler(nil, ZaiError.ClientError(message: "The instance type of input is not the same."))
+        }
+        
+        if (requests[0].self is DeleteItem) {
+            var params = [String : [Any]]()
+            for req in requests {
+                for (key, value) in req.getQueryParam() {
+                    params[key, default: []].append(value)
+                }
+            }
+            _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests[0], params: params, completionHandler: completionHandler)
+        } else {
+            _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests, completionHandler: completionHandler)
+        }
     }
 }
+

@@ -7,6 +7,8 @@ public class Event: Encodable {
     public var eventType: String
     public var eventValue: String
     public var timeToLive: Int?
+    public var from: String?
+    public var isZaiRec: Bool
     
     enum CodingKeys: String, CodingKey {
             case userId = "user_id"
@@ -15,15 +17,19 @@ public class Event: Encodable {
             case eventType = "event_type"
             case eventValue = "event_value"
             case timeToLive = "time_to_live"
+            case from = "from"
+            case isZaiRec = "is_zai_recommendation"
     }
     
-    init(userId: String, itemId: String, timestamp: Double, eventType: String, eventValue: String, timeToLive: Int?) {
+    init(userId: String, itemId: String, timestamp: Double, eventType: String, eventValue: String, timeToLive: Int?, from: String?, isZaiRec: Bool) {
         self.userId = userId
         self.itemId = itemId
         self.timestamp = timestamp
         self.eventType = eventType
         self.eventValue = eventValue
         self.timeToLive = timeToLive
+        self.from = from
+        self.isZaiRec = isZaiRec
     }
 }
 
