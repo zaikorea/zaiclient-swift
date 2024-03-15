@@ -19,15 +19,20 @@ public class ZaiClient {
             throw ZaiError.InvalidCustomEndpoint
         }
         
-        guard (0...10).contains(customEndpoint.count) else {
+        guard (0...100).contains(customEndpoint.count) else {
             throw ZaiError.InvalidCustomEndpoint
         }
-        self._customEndpoint = customEndpoint == "" ? customEndpoint : "-\(customEndpoint)"
+        self._customEndpoint = customEndpoint
+    }
+
+    private func _processBaseUrl(baseUrl: String) -> String {
+        let postfix = self._customEndpoint == "" ? "" : "-\(self._customEndpoint)"
+        return String.init(format: baseUrl, postfix)
     }
     
     private func _sendRequest<D: Encodable, R: Decodable>(_ type: R.Type, method: HTTPMethod, baseUrl: String, path: String, payload: D, params: Parameters = [:], completionHandler: @escaping (_ response: R?,_ error: ZaiError.ClientError?) -> ()) {
 
-        let processedBaseUrl = String.init(format: baseUrl, _customEndpoint)
+        let processedBaseUrl = self._processBaseUrl(baseUrl: baseUrl)
         let zaiHeaders = generateZAiHeaders(zaiClientID: self._zaiClientID, zaiSecret: self._zaiSecret, path: path)
         
         let request = (params.isEmpty) ?
@@ -69,35 +74,35 @@ public class ZaiClient {
         _sendRequest(RecommendationResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, completionHandler: completionHandler)
     }
     
-    public func sendRequest(_ request: ItemRequest, completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
-        if (request.self is DeleteItem) {
-            _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, params: request.getQueryParam(), completionHandler: completionHandler)
-        } else {
-            _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, completionHandler: completionHandler)
-        }
-    }
+    // public func sendRequest(_ request: ItemRequest, completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+    //     if (request.self is DeleteItem) {
+    //         _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, params: request.getQueryParam(), completionHandler: completionHandler)
+    //     } else {
+    //         _sendRequest(ItemResponse.self, method: request.method, baseUrl: request.baseUrl, path: request.getPath(clientId: self._zaiClientID), payload: request, completionHandler: completionHandler)
+    //     }
+    // }
     
-    public func sendRequest(_ requests: [ItemRequest], completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
+    // public func sendRequest(_ requests: [ItemRequest], completionHandler: @escaping (ItemResponse?, ZaiError.ClientError?) -> () = { _,_  in }) {
 
-        if requests.count > Config.batchRequestCap {
-            return completionHandler(nil, ZaiError.ClientError(message: "The number of items in batch exceeded the size limit."))
-        }
+    //     if requests.count > Config.batchRequestCap {
+    //         return completionHandler(nil, ZaiError.ClientError(message: "The number of items in batch exceeded the size limit."))
+    //     }
         
-        if (!requests.allSatisfy({ type(of: $0) == type(of: requests[0])})) {
-            return completionHandler(nil, ZaiError.ClientError(message: "The instance type of input is not the same."))
-        }
+    //     if (!requests.allSatisfy({ type(of: $0) == type(of: requests[0])})) {
+    //         return completionHandler(nil, ZaiError.ClientError(message: "The instance type of input is not the same."))
+    //     }
         
-        if (requests[0].self is DeleteItem) {
-            var params = [String : [Any]]()
-            for req in requests {
-                for (key, value) in req.getQueryParam() {
-                    params[key, default: []].append(value)
-                }
-            }
-            _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests[0], params: params, completionHandler: completionHandler)
-        } else {
-            _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests, completionHandler: completionHandler)
-        }
-    }
+    //     if (requests[0].self is DeleteItem) {
+    //         var params = [String : [Any]]()
+    //         for req in requests {
+    //             for (key, value) in req.getQueryParam() {
+    //                 params[key, default: []].append(value)
+    //             }
+    //         }
+    //         _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests[0], params: params, completionHandler: completionHandler)
+    //     } else {
+    //         _sendRequest(ItemResponse.self, method: requests[0].method, baseUrl: requests[0].baseUrl, path: requests[0].getPath(clientId: self._zaiClientID), payload: requests, completionHandler: completionHandler)
+    //     }
+    // }
 }
 
