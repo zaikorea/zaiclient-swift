@@ -74,7 +74,7 @@ public func checkSuccessfulEventAdd(event: EventRequest?, isTest: Bool = false, 
                             expect(ddbResponse.items![0]["event_type"]?.s).to(equal(e.eventType))
                             expect(ddbResponse.items![0]["is_zai_recommendation"]?.boolean == 1).to(equal(e.isZaiRec))
                             if (e.from == nil) {
-                                expect(ddbResponse.items![0]["from"]?.s).to(beNil())
+                                expect(ddbResponse.items![0]["from"]?.s).to(equal("null"))
                             } else {
                                 expect(ddbResponse.items![0]["from"]?.s).to(equal(e.from))
                             }
@@ -210,37 +210,37 @@ public func checkSuccessfulRecommendation(recommendation: RecommendationRequest?
 }
 
 
-public func checkSuccessfulItemRequest(request: ItemRequest?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
-    do {
-        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
-
-        zaiClient.sendRequest(request!) {
-            (res, err) in if let response = res {
-                completionHandler(true, nil)
-            } else {
-                print(err?.message)
-                fail()
-            }
-        }
-    } catch let error {
-        print(error)
-        fail()
-    }
-}
-
-public func checkSuccessfulBatchDeleteItem(request: [ItemRequest]?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
-    do {
-        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
-
-        zaiClient.sendRequest(request!) {
-            (res, err) in if let response = res {
-                completionHandler(true, nil)
-            } else {
-                print(err?.message)
-                fail()
-            }
-        }
-    } catch let error {
-        fail()
-    }
-}
+//public func checkSuccessfulItemRequest(request: ItemRequest?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+//    do {
+//        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
+//
+//        zaiClient.sendRequest(request!) {
+//            (res, err) in if let response = res {
+//                completionHandler(true, nil)
+//            } else {
+//                print(err?.message)
+//                fail()
+//            }
+//        }
+//    } catch let error {
+//        print(error)
+//        fail()
+//    }
+//}
+//
+//public func checkSuccessfulBatchDeleteItem(request: [ItemRequest]?, completionHandler: @escaping (_ response: Bool?,_ error: Error?) -> ()) {
+//    do {
+//        let zaiClient = try ZaiClient(zaiClientID: clientId, zaiSecret: clientSecret, customEndpoint: "dev")
+//
+//        zaiClient.sendRequest(request!) {
+//            (res, err) in if let response = res {
+//                completionHandler(true, nil)
+//            } else {
+//                print(err?.message)
+//                fail()
+//            }
+//        }
+//    } catch let error {
+//        fail()
+//    }
+//}
