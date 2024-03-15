@@ -456,7 +456,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("addEventLog with manual timestamp") {
                     var flag = false
-                    let e = try? AddCustomEvent(userId: generateUUID(), itemId: generateUUID(), eventType: "customEvent", eventValue: generateQuery(), timestamp: Date().timeIntervalSince1970)
+                    let e = try? AddCustomEvent(userId: generateUUID(), itemId: generateUUID(), timestamp: Date().timeIntervalSince1970, eventType: "customEvent", eventValue: generateQuery())
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
@@ -519,7 +519,7 @@ class ZaiClientCollectorSpec: QuickSpec {
                 
                 it("addBatchEventLog with manual timestamp") {
                     var flag = false
-                    let e = try? AddCustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10), timestamp: Date().timeIntervalSince1970)
+                    let e = try? AddCustomEvent(userId: generateUUID(), itemIds: Array(repeating: generateUUID(), count: 10), eventType: "customEvent", eventValues: Array(repeating: generateQuery(), count: 10))
                     checkSuccessfulEventAdd(event: e) {
                         (success, error) in if let _ = success {
                             flag = true
