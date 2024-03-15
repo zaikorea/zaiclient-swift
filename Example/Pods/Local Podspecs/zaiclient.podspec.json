@@ -1,6 +1,6 @@
 {
   "name": "zaiclient",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "summary": "REST client SDK that allows you to easily use Z.Ai API in Swift environment.",
   "homepage": "https://github.com/zaikorea/zaiclient-swift",
   "license": "Proprietary",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/zaikorea/zaiclient-swift.git",
-    "tag": "0.1.0"
+    "tag": "1.0.0"
   },
   "platforms": {
     "ios": "12.0"
