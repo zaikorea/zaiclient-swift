@@ -1,8 +1,9 @@
 import Foundation
 
 public struct Config {
-    public static let eventsApiEndPoint: String = "https://collector-api%@.zaikorea.org"
+    public static let collectorApiEndPoint: String = "https://collector-api%@.zaikorea.org"
     public static let eventsApiPath: String = "/events"
+    public static let itemsApiPath: String = "/items"
     
     public static let mlApiEndPoint: String = "https://ml-api%@.zaikorea.org"
     public static let mlApiPathPrefix: String = "/clients/%@/recommenders"
@@ -14,8 +15,6 @@ public struct Config {
     public static let zaiClientIdHeader: String = "X-ZAI-CLIENT-ID"
     public static let zaiUnixTimestampHeader: String = "X-ZAI-TIMESTAMP"
     public static let zaiAuthorizationHeader: String = "X-ZAI-AUTHORIZATION"
-    public static let zaiCallTypeHeader: String = "X-ZAI-CALL-TYPE"
-    public static let zaiCallType: String = "sdk_call"
     
     public static let batchRequestCap: Int = 50
     public static let epsilon: Double = 1e-4

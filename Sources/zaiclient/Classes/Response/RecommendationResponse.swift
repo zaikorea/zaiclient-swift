@@ -23,6 +23,5 @@ public struct RecommendationResponse: Decodable {
             print("WARNING: Failed to parse the metadata to object, returning an empty object. metadata: \(metadata)")
             metadata = "{}"
         }
-
     }
 }

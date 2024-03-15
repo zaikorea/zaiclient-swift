@@ -13,6 +13,7 @@ public enum ZaiError: Error {
     case InvalidRecommendationType
     case InvalidEventType
     case InvalidEventValue
+    case InvalidFrom
     case InvalidOptions
     case InvalidCustomEndpoint
     case NetworkError
@@ -26,7 +27,7 @@ extension ZaiError: LocalizedError {
         case .EmptyBatch:
             return "Cannot log empty EventBatch object."
         case .BatchSizeLimitExceeded:
-            return "The number of items in event batch exceeded the size limit."
+            return "The number of items in batch exceeded the size limit."
         case .BatchUpdateForbidden:
             return "EventBatch instance does not support updateEventLog operation."
         case .InvalidUserId:
@@ -45,10 +46,12 @@ extension ZaiError: LocalizedError {
             return "Length of event type must be between 1 and 500."
         case .InvalidEventValue:
             return "Length of event value must be between 1 and 500."
+        case .InvalidFrom:
+            return "Length of from must be between 1 and 500."
         case .InvalidOptions:
             return "Length of options must be between 0 and 1000."
         case .InvalidCustomEndpoint:
-            return "Only alphanumeric characters of length up to 10 are allowed for custom endpoint."
+            return "Only alphanumeric characters of length up to 100 are allowed for custom endpoint."
         case .NetworkError:
             return "ZaiClient network connection failed."
         }

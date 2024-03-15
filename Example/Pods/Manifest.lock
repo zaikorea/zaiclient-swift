@@ -5,7 +5,7 @@ PODS:
     - AWSCore (= 2.28.0)
   - Nimble (10.0.0)
   - Quick (2.2.1)
-  - zaiclient (0.1.0):
+  - zaiclient (1.0.0):
     - Alamofire (~> 5.2)
 
 DEPENDENCIES:
@@ -32,8 +32,8 @@ SPEC CHECKSUMS:
   AWSDynamoDB: 4df801c204c9e7f1ca053ac1035bacc3f076123b
   Nimble: 5316ef81a170ce87baf72dd961f22f89a602ff84
   Quick: f5754d69b7013f5864c29aab9ae6f0c79c5bc200
-  zaiclient: 2d06b64597a26e01392f0c7aec1ab153c45a5f18
+  zaiclient: f2ad7b1d74838164c3176128ee30ea17f2f75ead
 
 PODFILE CHECKSUM: 9cbc69f77ffd944743ac20816406ffbe189c174a
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

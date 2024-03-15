@@ -1,0 +1,35 @@
+import Foundation
+
+public class AddProductDetailViewEvent: EventRequest {
+    private let defaultEventType: String = "product_detail_view"
+    private let defaultEventValue: String = "null"
+    
+    public required init(
+        userId: String,
+        itemId: String,
+        timestamp: Double = Date().timeIntervalSince1970,
+        from: String = "",
+        isZaiRec: Bool = false,
+        url: String = "",
+        ref: String = "",
+        recommendationId: String = "",
+        eventProperties: [String: Any] = [:],
+        userProperties: [String: Any] = [:]
+    ) throws {
+        try super.init(
+            userId: userId,
+            itemIds: [itemId],
+            timestamp: timestamp,
+            eventType: defaultEventType,
+            eventValues: [defaultEventValue],
+            from: [from],
+            isZaiRec: [isZaiRec],
+            url: url,
+            ref: ref,
+            recommendationId: recommendationId,
+            eventProperties: eventProperties,
+            userProperties: userProperties
+        )
+    }
+}
+ 

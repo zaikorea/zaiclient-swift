@@ -1,6 +1,6 @@
 import Foundation
 
-public class RecommendationRequest: Encodable {
+public class RecommendationRequest: Request, Encodable {
     
     public var userId: String?
     public var itemId: String?
@@ -63,10 +63,8 @@ public class RecommendationRequest: Encodable {
         self.offset = offset
         self.recommendationType = recommendationType
         self.options = options
-    }
-    
-    public func getPathPrefix() -> String {
-        return ""
+        
+        super.init(method: .post, baseUrl: Config.mlApiEndPoint)
     }
 }
 
