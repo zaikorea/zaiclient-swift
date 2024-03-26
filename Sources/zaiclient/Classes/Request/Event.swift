@@ -1,25 +1,7 @@
 import Foundation
 
-//struct AnyEncodable: Encodable {
-//    let value: Any
-//
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.singleValueContainer()
-//
-//        switch value {
-//        case let stringValue as String:
-//            try container.encode(stringValue)
-//        case let intValue as Int:
-//            try container.encode(intValue)
-//        // 다른 타입에 대한 케이스도 추가...
-//        default:
-//            throw EncodingError.invalidValue(value, EncodingError.Context(codingPath: container.codingPath, debugDescription: "타입을 인코딩할 수 없음"))
-//        }
-//    }
-//}
 
-
-public class Event: Encodable {
+public class Event: Codable {
     public var userId: String
     public var itemId: String
     public var timestamp: Double
@@ -31,8 +13,8 @@ public class Event: Encodable {
     public var url: String? = nil
     public var ref: String? = nil
     public var recommendationId: String? = nil
-//    public var eventProperties: [String: Any]? = nil
-//    public var userProperties: [String: Any]? = nil
+    public var eventProperties: [String: String]? = nil
+    public var userProperties: [String: String]? = nil
     
     enum CodingKeys: String,
         CodingKey {
@@ -47,8 +29,8 @@ public class Event: Encodable {
             case url = "url"
             case ref = "ref"
             case recommendationId = "recommendation_id"
-//            case eventProperties = "event_properties"
-//            case userProperties = "user_properties"
+            case eventProperties = "event_properties"
+            case userProperties = "user_properties"
     }
     
     init(
@@ -63,13 +45,9 @@ public class Event: Encodable {
         url: String?,
         ref: String?,
         recommendationId: String?,
-        eventProperties: [String: Any]?,
-        userProperties: [String: Any]?
+        eventProperties: [String: String]?,
+        userProperties: [String: String]?
     ) {
-        // [String: Any] is not "encodable"
-//        let _eventProperties = try? JSONEncoder().encode(eventProperties?.mapValues { AnyEncodable(value: $0) })
-//        let _userProperties = try? JSONEncoder().encode(userProperties?.mapValues { AnyEncodable(value: $0) })
-        
         self.userId = userId
         self.itemId = itemId
         self.timestamp = timestamp
@@ -81,8 +59,51 @@ public class Event: Encodable {
         self.url = url
         self.ref = ref
         self.recommendationId = recommendationId
-//        self.eventProperties = eventProperties
-//        self.userProperties = userProperties
+        self.eventProperties = eventProperties
+        self.userProperties = userProperties
     }
 }
 
+extension Event: CustomStringConvertible {
+    public var description: String {
+        var properties = [
+            "userId: \(userId)",
+            "itemId: \(itemId)",
+            "timestamp: \(timestamp)",
+            "eventType: \(eventType)",
+            "eventValue: \(eventValue)",
+            "timeToLive: \(String(describing: timeToLive))",
+            "isZaiRec: \(isZaiRec)"
+        ]
+        
+        if let from = from {
+            properties.append("from: \(from)")
+        }
+        if let url = url {
+            properties.append("url: \(url)")
+        }
+        if let ref = ref {
+            properties.append("ref: \(ref)")
+        }
+        if let recommendationId = recommendationId {
+            properties.append("recommendationId: \(recommendationId)")
+        }
+        
+        let eventPropertiesDescription = eventProperties?.map { "\($0.key): \($0.value)" }.joined(separator: ", ") ?? "nil"
+        if (eventPropertiesDescription.count > 0) {
+            properties.append("eventProperties: \(eventPropertiesDescription)")
+        } else {
+            properties.append("eventProperties: \([:])")
+        }
+        
+        
+        let userPropertiesDescription = userProperties?.map { "\($0.key): \($0.value)" }.joined(separator: ", ") ?? "nil"
+        if (userPropertiesDescription.count > 0) {
+            properties.append("userProperties: \(userPropertiesDescription)")
+        } else {
+            properties.append("userProperties: \([:])")
+        }
+        
+        return properties.joined(separator: "\n")
+    }
+}

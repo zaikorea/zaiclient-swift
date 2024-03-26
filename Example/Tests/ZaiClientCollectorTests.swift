@@ -71,6 +71,16 @@ class ZaiClientCollectorSpec: QuickSpec {
                     }
                     expect(flag).toEventually(equal(true), timeout: .seconds(10))
                 }
+                it("addEventLog with userProperties and eventProperties") {
+                    var flag = false
+                    let e = try? AddProductDetailViewEvent(userId: generateUUID(), itemId: generateUUID(), from: generatePageType(), isZaiRec: true, eventProperties: ["key" : "value"], userProperties: ["key2" : "value2"])
+                    checkSuccessfulEventAdd(event: e) {
+                        (success, error) in if let _ = success {
+                            flag = true
+                        }
+                    }
+                    expect(flag).toEventually(equal(true), timeout: .seconds(10))
+                }
             }
         }
         
