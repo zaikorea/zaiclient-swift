@@ -12,8 +12,8 @@ open class EventRequest: Request {
     private var url: String
     private var ref: String
     private var recommendationId: String
-    private var eventProperties: [String: Any]
-    private var userProperties: [String: Any]
+    private var eventProperties: [String: String]
+    private var userProperties: [String: String]
     
     init(
         userId: String,
@@ -26,8 +26,8 @@ open class EventRequest: Request {
         url: String,
         ref: String,
         recommendationId: String,
-        eventProperties: [String: Any],
-        userProperties: [String: Any]
+        eventProperties: [String: String],
+        userProperties: [String: String]
     ) throws {
         // Input validation
         guard (1...500).contains(userId.count) else {

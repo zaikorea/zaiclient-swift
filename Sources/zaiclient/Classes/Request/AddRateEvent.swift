@@ -14,8 +14,8 @@ public class AddRateEvent: EventRequest {
         url: String = "",
         ref: String = "",
         recommendationId: String = "",
-        eventProperties: [String: Any] = [:],
-        userProperties: [String: Any] = [:]
+        eventProperties: [String: String] = [:],
+        userProperties: [String: String] = [:]
     ) throws {
         try super.init(
             userId: userId,

@@ -13,8 +13,8 @@ public class AddCustomEvent: EventRequest {
         url: String = "",
         ref: String = "",
         recommendationId: String = "",
-        eventProperties: [String: Any] = [:],
-        userProperties: [String: Any] = [:]
+        eventProperties: [String: String] = [:],
+        userProperties: [String: String] = [:]
     ) throws {
         if itemIds.count != eventValues.count {
             throw ZaiError.InputLengthNotEqual
@@ -50,8 +50,8 @@ public class AddCustomEvent: EventRequest {
         url: String = "",
         ref: String = "",
         recommendationId: String = "",
-        eventProperties: [String: Any] = [:],
-        userProperties: [String: Any] = [:]
+        eventProperties: [String: String] = [:],
+        userProperties: [String: String] = [:]
     ) throws {
         try self.init(
             userId: userId,
