@@ -4,7 +4,7 @@ public struct EventLoggerResponse: Decodable {
     public var message: String
     public var failureCount: Int
     public var timestamp: Double
-    public var processedEvents: [Event]
+    public var processedEvents: [Event]?
     
     enum CodingKeys: String, CodingKey {
         case message = "message"
