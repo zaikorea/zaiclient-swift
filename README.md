@@ -23,7 +23,7 @@ pod 'zaiclient'
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/zaikorea/zaiclient-swift.git", .upToNextMajor(from: "0.1.0"))
+    .package(url: "https://github.com/zaikorea/zaiclient-swift.git", .upToNextMajor(from: "1.1.0"))
 ]
 ```
 
